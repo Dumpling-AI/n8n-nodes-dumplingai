@@ -5,37 +5,29 @@ import {
 	INodeProperties,
 } from 'n8n-workflow';
 
-export class HttpBinApi implements ICredentialType {
-	name = 'httpbinApi';
-	displayName = 'HttpBin API';
-	documentationUrl = 'https://your-docs-url';
+export class DumplingAiApi implements ICredentialType {
+	name = 'dumplingAiApi';
+	displayName = 'Dumpling AI API';
+	documentationUrl = 'https://docs.dumplingai.com/api-reference/introduction';
 	properties: INodeProperties[] = [
 		{
-			displayName: 'Token',
-			name: 'token',
+			displayName: 'API Key',
+			name: 'apiKey',
 			type: 'string',
 			default: '',
 			typeOptions: {
 				password: true,
-			}
-		},
-		{
-			displayName: 'Domain',
-			name: 'domain',
-			type: 'string',
-			default: 'https://httpbin.org',
+			},
 		},
 	];
 
 	// This allows the credential to be used by other parts of n8n
 	// stating how this credential is injected as part of the request
-	// An example is the Http Request node that can make generic calls
-	// reusing this credential
 	authenticate: IAuthenticateGeneric = {
 		type: 'generic',
 		properties: {
 			headers: {
-				Authorization: '={{"Bearer " + $credentials.token}}',
+				Authorization: '=Bearer {{$credentials.apiKey}}',
 			},
 		},
 	};
@@ -43,8 +35,12 @@ export class HttpBinApi implements ICredentialType {
 	// The block below tells how this credential can be tested
 	test: ICredentialTestRequest = {
 		request: {
-			baseURL: '={{$credentials?.domain}}',
-			url: '/bearer',
+			baseURL: 'https://app.dumplingai.com/api/v1',
+			url: '/get-youtube-transcript',
+			method: 'POST',
+			body: {
+				videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+			},
 		},
 	};
-}
+} 

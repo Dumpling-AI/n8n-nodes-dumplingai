@@ -1,19 +1,24 @@
 {
-  "name": "n8n-nodes-<...>",
+  "name": "n8n-nodes-dumplingai",
   "version": "0.1.0",
-  "description": "",
+  "description": "n8n community node for Dumpling AI integration",
   "keywords": [
-    "n8n-community-node-package"
+    "n8n-community-node-package",
+    "dumpling-ai",
+    "youtube-transcript",
+    "web-scraping",
+    "ai",
+    "data-extraction"
   ],
   "license": "MIT",
   "homepage": "",
   "author": {
-    "name": "",
-    "email": ""
+    "name": "Dumpling AI",
+    "email": "help@dumplingai.com"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/<...>/n8n-nodes-<...>.git"
+    "url": "https://github.com/dumplingai/n8n-nodes-dumplingai.git"
   },
   "engines": {
     "node": ">=20.15"
@@ -33,12 +38,10 @@
   "n8n": {
     "n8nNodesApiVersion": 1,
     "credentials": [
-      "dist/credentials/ExampleCredentialsApi.credentials.js",
-      "dist/credentials/HttpBinApi.credentials.js"
+      "dist/credentials/DumplingAiApi.credentials.js"
     ],
     "nodes": [
-      "dist/nodes/ExampleNode/ExampleNode.node.js",
-      "dist/nodes/HttpBin/HttpBin.node.js"
+      "dist/nodes/DumplingAi/DumplingAi.node.js"
     ]
   },
   "devDependencies": {
