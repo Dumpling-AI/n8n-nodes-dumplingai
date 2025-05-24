@@ -7,6 +7,14 @@ import {
 	NodeApiError,
 } from 'n8n-workflow';
 
+import {
+	resourceProperty,
+	dataApiOperations,
+	webScrapingOperations,
+	getYouTubeTranscriptFields,
+	scrapeUrlFields,
+} from './descriptions';
+
 export class DumplingAi implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Dumpling AI',
@@ -33,207 +41,11 @@ export class DumplingAi implements INodeType {
 			},
 		},
 		properties: [
-			{
-				displayName: 'Resource',
-				name: 'resource',
-				type: 'options',
-				noDataExpression: true,
-				options: [
-					{
-						name: 'Data API',
-						value: 'dataApi',
-					},
-					{
-						name: 'Web Scraping',
-						value: 'webScraping',
-					},
-				],
-				default: 'dataApi',
-			},
-			{
-				displayName: 'Operation',
-				name: 'operation',
-				type: 'options',
-				noDataExpression: true,
-				displayOptions: {
-					show: {
-						resource: ['dataApi'],
-					},
-				},
-				options: [
-					{
-						name: 'Get YouTube Transcript',
-						value: 'getYouTubeTranscript',
-						description: 'Extract the transcript from a specified YouTube video URL',
-						action: 'Get youtube transcript',
-					},
-				],
-				default: 'getYouTubeTranscript',
-			},
-			{
-				displayName: 'Operation',
-				name: 'operation',
-				type: 'options',
-				noDataExpression: true,
-				displayOptions: {
-					show: {
-						resource: ['webScraping'],
-					},
-				},
-				options: [
-					{
-						name: 'Scrape URL',
-						value: 'scrapeUrl',
-						description: 'Scrape data from a specified URL with formatting options',
-						action: 'Scrape URL',
-					},
-				],
-				default: 'scrapeUrl',
-			},
-			// YouTube Transcript fields
-			{
-				displayName: 'Video URL',
-				name: 'videoUrl',
-				type: 'string',
-				required: true,
-				displayOptions: {
-					show: {
-						resource: ['dataApi'],
-						operation: ['getYouTubeTranscript'],
-					},
-				},
-				default: '',
-				placeholder: 'https://www.youtube.com/watch?v=example',
-				description: 'The URL of the YouTube video',
-			},
-			{
-				displayName: 'Include Timestamps',
-				name: 'includeTimestamps',
-				type: 'boolean',
-				displayOptions: {
-					show: {
-						resource: ['dataApi'],
-						operation: ['getYouTubeTranscript'],
-					},
-				},
-				default: true,
-				description: 'Whether to include timestamps in the transcript',
-			},
-			{
-				displayName: 'Timestamps to Combine',
-				name: 'timestampsToCombine',
-				type: 'number',
-				displayOptions: {
-					show: {
-						resource: ['dataApi'],
-						operation: ['getYouTubeTranscript'],
-						includeTimestamps: [true],
-					},
-				},
-				default: 5,
-				description: 'The number of timestamps to combine in the transcript',
-				typeOptions: {
-					minValue: 1,
-				},
-			},
-			{
-				displayName: 'Preferred Language',
-				name: 'preferredLanguage',
-				type: 'options',
-				displayOptions: {
-					show: {
-						resource: ['dataApi'],
-						operation: ['getYouTubeTranscript'],
-					},
-				},
-				default: 'en',
-				description: 'Preferred language for the transcript',
-				options: [
-					{ name: 'Chinese (Simplified)', value: 'zh-Hans' },
-					{ name: 'Chinese (Traditional)', value: 'zh-Hant' },
-					{ name: 'English', value: 'en' },
-					{ name: 'French', value: 'fr' },
-					{ name: 'German', value: 'de' },
-					{ name: 'Italian', value: 'it' },
-					{ name: 'Japanese', value: 'ja' },
-					{ name: 'Korean', value: 'ko' },
-					{ name: 'Portuguese', value: 'pt' },
-					{ name: 'Spanish', value: 'es' },
-					// Add more languages as needed based on the full list from the API docs
-				],
-			},
-			// Web Scraping fields
-			{
-				displayName: 'URL',
-				name: 'url',
-				type: 'string',
-				required: true,
-				displayOptions: {
-					show: {
-						resource: ['webScraping'],
-						operation: ['scrapeUrl'],
-					},
-				},
-				default: '',
-				placeholder: 'https://example.com',
-				description: 'The URL to scrape',
-			},
-			{
-				displayName: 'Output Format',
-				name: 'format',
-				type: 'options',
-				displayOptions: {
-					show: {
-						resource: ['webScraping'],
-						operation: ['scrapeUrl'],
-					},
-				},
-				options: [
-					{
-						name: 'HTML',
-						value: 'html',
-						description: 'Raw HTML content',
-					},
-					{
-						name: 'Markdown',
-						value: 'markdown',
-						description: 'Clean markdown format',
-					},
-					{
-						name: 'Screenshot',
-						value: 'screenshot',
-						description: 'Screenshot of the page',
-					},
-				],
-				default: 'markdown',
-				description: 'The format of the output',
-			},
-			{
-				displayName: 'Clean Output',
-				name: 'cleaned',
-				type: 'boolean',
-				displayOptions: {
-					show: {
-						resource: ['webScraping'],
-						operation: ['scrapeUrl'],
-					},
-				},
-				default: true,
-				description: 'Whether the output should be cleaned',
-			},
-			{
-				displayName: 'Render JavaScript',
-				name: 'renderJs',
-				type: 'boolean',
-				displayOptions: {
-					show: {
-						resource: ['webScraping'],
-						operation: ['scrapeUrl'],
-					},
-				},
-				default: true,
-				description: 'Whether to render JavaScript before scraping (disable for faster results if not needed)',
-			},
+			resourceProperty,
+			dataApiOperations,
+			webScrapingOperations,
+			...getYouTubeTranscriptFields,
+			...scrapeUrlFields,
 		],
 	};
 
