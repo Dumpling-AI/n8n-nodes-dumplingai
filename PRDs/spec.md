@@ -120,14 +120,14 @@ The node will use a "Category as Resource" model.
 *   **Get YouTube Transcript:**
     *   **Description:** Retrieve the transcript of a YouTube video.
     *   **HTTP Method:** `POST`
-    *   **API Path:** `/api/v1/youtube-transcript` (as per original spec)
-    *   **Key Parameters:** `url` (string, YouTube video URL or ID).
+    *   **API Path:** `/api/v1/get-youtube-transcript`
+    *   **Key Parameters:** `videoUrl` (string, YouTube video URL), `includeTimestamps` (boolean), `timestampsToCombine` (number), `preferredLanguage` (string).
     *   **Parameter File:** `DataApi/GetYouTubeTranscriptDescription.ts`
 *   **Get TikTok Transcript:**
     *   **Description:** Retrieve transcript (captions) from a TikTok video.
-    *   **HTTP Method:** `POST` (assumed)
-    *   **API Path:** `/api/v1/tiktok-transcript` (assumed)
-    *   **Key Parameters:** `url` (string, TikTok video URL or ID).
+    *   **HTTP Method:** `POST`
+    *   **API Path:** `/api/v1/get-tiktok-transcript`
+    *   **Key Parameters:** `videoUrl` (string, TikTok video URL), `preferredLanguage` (string, 2-letter ISO 639-1 language code).
     *   **Parameter File:** `DataApi/GetTikTokTranscriptDescription.ts`
 *   **Get TikTok Profile:**
     *   **Description:** Fetch profile information for a TikTok user.
@@ -172,8 +172,8 @@ The node will use a "Category as Resource" model.
 *(Base Path Segment: `/scraping` - assumed)*
 *   **Scrape URL:**
     *   **Description:** Scrape content from a webpage URL.
-    *   **HTTP Method:** `POST` (assumed)
-    *   **API Path:** `/api/v1/scraping/scrape-url` (assumed)
+    *   **HTTP Method:** `POST`
+    *   **API Path:** `/api/v1/scrape`
     *   **Key Parameters:** `url`, `format` (dropdown: markdown/html/screenshot), `cleaned` (boolean), `renderJs` (boolean, default true).
     *   **Parameter File:** `WebScraping/ScrapeUrlDescription.ts`
 
@@ -283,7 +283,11 @@ Implemented in `DumplingAi.node.ts` under `methods.loadOptions`.
 *   **Fallback:** Hardcoding static lists (e.g., for `dateRange` if not API-driven) is acceptable if no API endpoint exists.
 *   All `loadOptions` calls will use `this.helpers.requestWithAuthentication('dumplingAiApi', ...)`.
 
-## 5. Execution Logic
+## 5. Execution Logic (Updated: Using Declarative Style)
+
+**Note:** The implementation now uses **declarative style** with routing configuration instead of a programmatic `execute()` method. This is the preferred approach for modern n8n nodes. Each operation includes a `routing` object that specifies HTTP method, URL, and request body mapping using n8n expressions (e.g., `'={{ $parameter.videoUrl }}'`). The node's `requestDefaults` provides the base URL (`https://app.dumplingai.com/api/v1`) and authentication is handled automatically via the credential configuration.
+
+## 5. Legacy Execution Logic (For Reference)
 
 The node’s `execute()` method (or `executeSingle()` if more appropriate for item-by-item processing) will:
 1.  Retrieve selected `resource` and `operation`.
@@ -340,5 +344,5 @@ The node’s `execute()` method (or `executeSingle()` if more appropriate for it
 
 *   Dumpling AI API Documentation https://docs.dumplingai.com/api-reference/introduction
 *   n8n Node Development Guidelines & Starter Template https://github.com/n8n-io/n8n-nodes-starter
-*   n8n Standard Node Parameters, Credentials, Programmatic Node Reference https://docs.n8n.io/integrations/creating-nodes/build/declarative-style-node/
+*   n8n Declarative Style Node Documentation https://docs.n8n.io/integrations/creating-nodes/plan/choose-node-method/
 *   n8n Community Node Verification Guidelines https://docs.n8n.io/integrations/creating-nodes/build/reference/verification-guidelines
