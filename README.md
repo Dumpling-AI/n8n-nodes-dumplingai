@@ -38,11 +38,11 @@ RUN cd /usr/local/lib/node_modules/n8n && npm install n8n-nodes-dumplingai
 
 You must have a Dumpling AI API key to use this node. You can register for a free account to get an API key here:
 
-https://app.dumplingai.com/users/sign_up
+https://app.dumplingai.com/register
 
 Once registered, you can find your API key here:
 
-https://app.dumplingai.com/manage-api-key
+https://app.dumplingai.com/api-keys
 
 Then you'll need to create a credential in n8n for Dumpling AI.
 
@@ -53,7 +53,16 @@ Add Dumpling AI to a workflow and configure your operation.
 ### Available Operations
 
 This node currently supports:
-- **Get YouTube Transcript** - Extract transcripts from YouTube videos
+
+#### Data API Operations
+- **Get YouTube Transcript** - Extract transcripts from YouTube videos with timestamps and language options
+- **Get TikTok Transcript** - Extract transcripts/captions from TikTok videos
+- **Search (Google Web)** - Perform Google web searches with optional content scraping
+- **Search Places** - Search Google Places for businesses and locations
+- **Search News** - Search Google News for articles
+- **Get Google Reviews** - Extract Google Reviews for businesses using keywords, CID, or Place ID
+
+#### Web Scraping Operations
 - **Scrape URL** - Extract content from web pages with formatting options
 
 Additional operations will be added in future releases.
@@ -71,16 +80,68 @@ Extract transcripts from YouTube videos with optional timestamps and language pr
 }
 ```
 
-**Response:**
+#### Get TikTok Transcript
+
+Extract transcripts/captions from TikTok videos with language preferences.
+
 ```json
 {
-  "transcript": "00:00 - Welcome to this video.\n00:05 - Today we'll be discussing...",
+  "videoUrl": "https://www.tiktok.com/@username/video/1234567890",
+  "preferredLanguage": "en"
+}
+```
+
+#### Search (Google Web)
+
+Perform Google web searches with optional content scraping of results.
+
+```json
+{
+  "query": "artificial intelligence trends 2024",
+  "country": "US",
+  "language": "en",
+  "scrapeResults": true,
+  "numResultsToScrape": 3,
+  "scrapeFormat": "markdown"
+}
+```
+
+#### Search Places
+
+Search Google Places for businesses and locations.
+
+```json
+{
+  "query": "coffee shops near me",
+  "location": "New York, NY",
   "language": "en"
 }
 ```
 
-**Supported Languages:**
-Chinese (Simplified), Chinese (Traditional), English, French, German, Italian, Japanese, Korean, Portuguese, Spanish, and many more.
+#### Search News
+
+Search Google News for articles and news content.
+
+```json
+{
+  "query": "climate change",
+  "dateRange": "past_week",
+  "language": "en"
+}
+```
+
+#### Get Google Reviews
+
+Extract Google Reviews for businesses using different identification methods.
+
+```json
+{
+  "inputType": "keyword",
+  "keyword": "Starbucks Times Square",
+  "reviews": 20,
+  "sortBy": "newest"
+}
+```
 
 #### Scrape URL
 
@@ -95,18 +156,6 @@ Extract content from web pages with customizable formatting and processing optio
 }
 ```
 
-**Response:**
-```json
-{
-  "title": "Page Title",
-  "metadata": {...},
-  "url": "https://example.com",
-  "format": "markdown",
-  "cleaned": true,
-  "content": "# Page Title\n\nPage content in markdown format..."
-}
-```
-
 **Output Formats:**
 - **HTML** - Raw HTML content
 - **Markdown** - Clean markdown format  
@@ -114,19 +163,16 @@ Extract content from web pages with customizable formatting and processing optio
 
 ## API Resources
 
-This node currently supports the most popular Dumpling AI APIs. If there's an API missing that you would like to use, please let us know at contact@dumplingai.com
+This node currently supports the most popular Dumpling AI APIs. If there's an API missing that you would like to use, please let us know at admin@dumplingai.com
 
 In the meantime, you can also use the [generic HTTP Request node](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/) to construct your requests.
 
 ### Coming Soon
 
-- Get TikTok Transcript
-- Get TikTok Profile
-- Search APIs (Google Web, News, Maps)
-- Additional Web Scraping (Crawl, Screenshot, Extract)
-- Document Conversion
-- AI Operations
-- Developer Tools
+- Document Conversion (PDF, Word, Excel, etc.)
+- AI Operations (Agent completions, Knowledge base search, Image generation)
+- Developer Tools (JavaScript/Python code execution)
+- Additional Data APIs (Social media profiles, advanced scraping)
 
 ## Related Resources
 
