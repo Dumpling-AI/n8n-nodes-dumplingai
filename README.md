@@ -164,18 +164,18 @@ https://docs.dumplingai.com/guides
 
 ### Release Flow
 
-After merging PRs into main, follow these steps to publish a new version:
+After merging PRs into master, follow these steps to publish a new version:
 
 ```bash
-# Switch to main branch and ensure it's up to date
-git checkout main
-git pull origin main
+# Switch to master branch and ensure it's up to date
+git checkout master
+git pull origin master
 
 # Bump version (patch, minor, or major)
 npm version patch         # or minor / major
 
 # Push changes and tags
-git push origin main
+git push origin master
 git push origin v$(node -p "require('./package.json').version")
 ```
 

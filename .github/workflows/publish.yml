@@ -5,7 +5,7 @@ on:
     tags:        # only runs when you push a tag that matches the version
       - 'v*'     # e.g. v0.1.1
     branches:
-      - main     # lets you trigger manually with workflow_dispatch if needed
+      - master   # lets you trigger manually with workflow_dispatch if needed
   workflow_dispatch:
 
 jobs:
