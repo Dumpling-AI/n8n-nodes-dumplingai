@@ -160,6 +160,32 @@ You can also find additional tutorials and resources here:
 
 https://docs.dumplingai.com/guides
 
+## Development
+
+### Release Flow
+
+After merging PRs into main, follow these steps to publish a new version:
+
+```bash
+# Switch to main branch and ensure it's up to date
+git checkout main
+git pull origin main
+
+# Bump version (patch, minor, or major)
+npm version patch         # or minor / major
+
+# Push changes and tags
+git push origin main
+git push origin v$(node -p "require('./package.json').version")
+```
+
+The tag push will automatically trigger the GitHub Actions workflow, which will:
+1. Build the package
+2. Check if the version already exists on npm
+3. Publish to npm if it's a new version
+
+You'll see a ✅ job in the Actions tab and the new version will appear on npm within a minute.
+
 ## License
 
 [MIT](https://github.com/dumplingai/n8n-nodes-dumplingai/blob/master/LICENSE.md)
