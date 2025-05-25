@@ -10,6 +10,10 @@ import {
 	webScrapingOperations,
 	getYouTubeTranscriptFields,
 	getTikTokTranscriptFields,
+	searchFields,
+	searchPlacesFields,
+	searchNewsFields,
+	getGoogleReviewsFields,
 	scrapeUrlFields,
 } from './descriptions';
 
@@ -46,6 +50,10 @@ export class DumplingAi implements INodeType {
 			webScrapingOperations,
 			...getYouTubeTranscriptFields,
 			...getTikTokTranscriptFields,
+			...searchFields,
+			...searchPlacesFields,
+			...searchNewsFields,
+			...getGoogleReviewsFields,
 			...scrapeUrlFields,
 		],
 	};

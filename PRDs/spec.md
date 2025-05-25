@@ -63,7 +63,7 @@ The Dumpling AI node will be implemented as `DumplingAi.node.ts`.
 *   **`defaults: { name: 'Dumpling AI' }`**
 *   **`inputs: ['main']`, `outputs: ['main']`**
 *   **`credentials: [{ name: 'dumplingAiApi', required: true }]`**
-*   **`requestDefaults: { baseURL: 'https://app.dumplingai.com/api/v1/', headers: { 'Content-Type': 'application/json' } }`** (JSON content type default, can be overridden for specific binary uploads if necessary).
+*   **`requestDefaults: { baseURL: 'https://app.dumplingai.com/api/v1', headers: { 'Content-Type': 'application/json', 'Request-Source': 'N8N' } }`** (JSON content type default, can be overridden for specific binary uploads if necessary).
 *   **`categories: ['AI', 'Development Tools']`** (for n8n.io marketplace)
 *   **License:** MIT
 *   **README:** Comprehensive README with setup, usage examples for key operations, and a link to Dumpling AI API documentation.
@@ -110,13 +110,29 @@ Each `...Description.ts` file will export an array of `INodeProperties` specific
 ## 4. Supported Operations and Parameters
 
 The node will use a "Category as Resource" model.
-*   **Resource Parameter (`resource`):** Dropdown with options: `Data APIs`, `Web Scraping`, `Document Conversion`, `AI Operations`, `Developer Tools`.
+*   **Resource Parameter (`resource`):** Dropdown with options for implemented categories.
 *   **Operation Parameter (`operation`):** Dynamically filtered dropdown based on the selected `resource`. Each option will have a descriptive `name` (for UI), `value` (internal ID for the operation), and `action` (for node subtitle).
 
 *For each operation below, specific `INodeProperties` will be defined in their respective `...Description.ts` files. Node parameter `name` attributes should match the API's expected JSON body keys or query string names directly.*
 
-### 4.1 Data APIs Operations
-*(Base Path Segment: `/data` - assumed)*
+### 4.0 Implementation Status
+
+This specification covers both **currently implemented** operations and **planned future features**. The implementation follows a phased approach:
+
+**Phase 1 (✅ Currently Implemented):**
+- Data API operations (6 operations)
+- Web Scraping operations (1 operation)
+
+**Phase 2 (📋 Planned):**
+- Document Conversion operations
+- AI Operations  
+- Developer Tools operations
+
+**Current Resource Categories:**
+- `Data API` (implemented)
+- `Web Scraping` (implemented)
+
+### 4.1 Data APIs Operations (✅ Implemented)
 *   **Get YouTube Transcript:**
     *   **Description:** Retrieve the transcript of a YouTube video.
     *   **HTTP Method:** `POST`
@@ -129,47 +145,44 @@ The node will use a "Category as Resource" model.
     *   **API Path:** `/api/v1/get-tiktok-transcript`
     *   **Key Parameters:** `videoUrl` (string, TikTok video URL), `preferredLanguage` (string, 2-letter ISO 639-1 language code).
     *   **Parameter File:** `DataApi/GetTikTokTranscriptDescription.ts`
-*   **Get TikTok Profile:**
-    *   **Description:** Fetch profile information for a TikTok user.
-    *   **HTTP Method:** `POST` (assumed)
-    *   **API Path:** `/api/v1/tiktok-profile` (assumed)
-    *   **Key Parameters:** `username` or `url` (string).
-    *   **Parameter File:** `DataApi/GetTikTokProfileDescription.ts`
 *   **Search (Google Web):**
-    *   **Description:** Perform a Google web search.
-    *   **HTTP Method:** `POST` (assumed)
-    *   **API Path:** `/api/v1/search/google-web` (assumed, or `/api/v1/search` with a type parameter)
-    *   **Key Parameters:** `query`, `country`, `location`, `language`, `dateRange`, `scrapeResults` (boolean), `format` (if scrapeResults is true).
-    *   **Parameter File:** `DataApi/SearchGoogleWebDescription.ts`
-*   **Get Autocomplete (Google):**
-    *   **Description:** Get Google search autocomplete suggestions.
-    *   **HTTP Method:** `POST` (assumed)
-    *   **API Path:** `/api/v1/search/google-autocomplete` (assumed)
-    *   **Key Parameters:** `queryPrefix`.
-    *   **Parameter File:** `DataApi/GetGoogleAutocompleteDescription.ts`
-*   **Search Maps (Google):**
-    *   **Description:** Search Google Maps for places.
-    *   **HTTP Method:** `POST` (assumed)
-    *   **API Path:** `/api/v1/search/google-maps` (assumed)
-    *   **Key Parameters:** `query`, `locationContext`. Potentially `latitude`, `longitude`.
-    *   **Parameter File:** `DataApi/SearchGoogleMapsDescription.ts`
-*   **Search News (Google):**
+    *   **Description:** Perform a Google web search with optional content scraping.
+    *   **HTTP Method:** `POST`
+    *   **API Path:** `/api/v1/search`
+    *   **Key Parameters:** `query` (string, required), `country`, `location`, `language`, `dateRange`, `page`, `scrapeResults` (boolean), `numResultsToScrape`, `scrapeOptions` (format, cleaned).
+    *   **Parameter File:** `DataApi/SearchDescription.ts`
+*   **Search Places:**
+    *   **Description:** Search Google Places for businesses and locations.
+    *   **HTTP Method:** `POST`
+    *   **API Path:** `/api/v1/search-places`
+    *   **Key Parameters:** `query` (string, required), `country`, `location`, `language`, `page`.
+    *   **Parameter File:** `DataApi/SearchPlacesDescription.ts`
+*   **Search News:**
     *   **Description:** Search Google News for articles.
-    *   **HTTP Method:** `POST` (assumed)
-    *   **API Path:** `/api/v1/search/google-news` (assumed)
-    *   **Key Parameters:** `query`, `country`, `language`, `dateRange`.
-    *   **Parameter File:** `DataApi/SearchGoogleNewsDescription.ts`
-*   **Get Google Reviews:**
-    *   **Description:** Fetch Google Reviews for a place/business.
-    *   **HTTP Method:** `POST` (assumed)
-    *   **API Path:** `/api/v1/data/google-reviews` (assumed)
-    *   **Key Parameters:** `placeId` or `query`.
+    *   **HTTP Method:** `POST`
+    *   **API Path:** `/api/v1/search-news`
+    *   **Key Parameters:** `query` (string, required), `country`, `location`, `language`, `dateRange`, `page`.
+    *   **Parameter File:** `DataApi/SearchNewsDescription.ts`
+*   **Get Google Reviews:** *(Updated parameters - corrected from previous implementation)*
+    *   **Description:** Get Google Reviews for a place or business.
+    *   **HTTP Method:** `POST`
+    *   **API Path:** `/api/v1/get-google-reviews`
+    *   **Key Parameters:** 
+        *   `inputType` (keyword/cid/placeId) - How to identify the business
+        *   `keyword` (string) - Business name or search term (when inputType=keyword)
+        *   `cid` (string) - Google Maps CID/Client ID (when inputType=cid)
+        *   `placeId` (string) - Google Maps Place ID (when inputType=placeId)
+        *   `reviews` (number, 1-4490, default 10) - Number of reviews to fetch
+        *   `sortBy` (relevant/newest/highest_rating/lowest_rating) - Sort order
+        *   `language` (string, advanced) - Language code (e.g., "en")
+        *   `location` (string, advanced) - Location context (default: "London,England,United Kingdom")
     *   **Parameter File:** `DataApi/GetGoogleReviewsDescription.ts`
+    *   **Note:** Previous implementation incorrectly included `country` and `page` parameters which are not supported by the API.
+
 
 *(Note: If `/api/v1/google-locations` endpoint exists, it will be used via `loadOptions` for location parameters in relevant search operations.)*
 
-### 4.2 Web Scraping Operations
-*(Base Path Segment: `/scraping` - assumed)*
+### 4.2 Web Scraping Operations (✅ Implemented)
 *   **Scrape URL:**
     *   **Description:** Scrape content from a webpage URL.
     *   **HTTP Method:** `POST`
@@ -177,7 +190,7 @@ The node will use a "Category as Resource" model.
     *   **Key Parameters:** `url`, `format` (dropdown: markdown/html/screenshot), `cleaned` (boolean), `renderJs` (boolean, default true).
     *   **Parameter File:** `WebScraping/ScrapeUrlDescription.ts`
 
-### 4.3 Document Conversion Operations
+### 4.3 Document Conversion Operations (📋 Planned - Phase 2)
 *(Base Path Segment: `/conversion` or `/document` - assumed)*
 *   **Doc to Text:**
     *   **HTTP Method:** `POST`
@@ -238,7 +251,7 @@ For operations requiring file input:
     *   A string field `binaryPropertyName` (default: `data`), allowing users to specify which property on the incoming n8n item holds the binary data.
     *   The node will read the binary data, base64-encode it, and include it in the JSON payload as per Dumpling AI's API (e.g., `{ "fileContentBase64": "...", "fileName": "..." }`).
 
-### 4.4 AI Operations
+### 4.4 AI Operations (📋 Planned - Phase 2)
 *(Base Path Segment: `/ai` - assumed)*
 *   **Generate Agent Completion:**
     *   **HTTP Method:** `POST`
@@ -264,7 +277,7 @@ For operations requiring file input:
 
 *(If "Generate Image (Alternate)" is distinct, it will be implemented similarly.)*
 
-### 4.5 Developer Tools Operations
+### 4.5 Developer Tools Operations (📋 Planned - Phase 2)
 *(Base Path Segment: `/devtools` - assumed)*
 *   **Run JavaScript Code:**
     *   **HTTP Method:** `POST`

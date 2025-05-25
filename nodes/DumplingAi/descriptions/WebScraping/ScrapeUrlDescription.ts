@@ -42,7 +42,7 @@ export const scrapeUrlFields: INodeProperties[] = [
 			},
 		},
 		default: true,
-		description: 'Whether the output should be cleaned',
+		description: 'Whether the output should be cleaned (removes nav bar, footer, etc.)',
 	},
 	{
 		displayName: 'Render JavaScript',
@@ -54,7 +54,7 @@ export const scrapeUrlFields: INodeProperties[] = [
 				operation: ['scrapeUrl'],
 			},
 		},
-		default: true,
+		default: false,
 		description: 'Whether to render JavaScript before scraping (disable for faster results if not needed)',
 	},
 ]; 
